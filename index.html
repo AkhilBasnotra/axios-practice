@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Appointment</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="main">
+      <header class="center">
+        <h1>Book a call</h1>
+        <p>Book a call and our Executive will call you</p>
+      </header>
+      <hr />
+
+      <section>
+        <form class="my-form"">
+          <div>
+            <label for="name" class="start">Name:</label><br />
+            <input type="text" class="box" id="name" />
+          </div>
+          <div>
+            <label for="email" class="start">Email:</label><br />
+            <input type="email" class="box" id="email" />
+          </div>
+          <div>
+            <label for="phone" class="start">Phone:</label><br />
+            <input type="number" class="box" id="phone" />
+          </div>
+          <div>
+            <label for="date" class="start">Time for Call:</label><br />
+            <input type="date" class="time" id="date" />
+            <input type="time" class="time" id="time" />
+          </div>
+          <button class="btn">GET A CALL</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="section2">
+      <h2 class="center">Booked for call</h2>
+      <ul id="items">
+        <!-- <li>asd</li> -->
+      </ul>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

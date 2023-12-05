@@ -1,0 +1,50 @@
+.main {
+  /* text-align: center; */
+  background-color: antiquewhite;
+  width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid orange;
+}
+
+.time {
+  margin-left: 5px;
+  width: 47.5%;
+  height: 30px;
+}
+
+h1 {
+  color: orange;
+}
+
+.center {
+  text-align: center;
+}
+
+.box {
+  margin-left: 5px;
+  width: 97%;
+  height: 25px;
+}
+
+.btn {
+  width: 98%;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  margin-left: 6px;
+  height: 30px;
+  font-size: 18px;
+}
+
+.start {
+  margin-left: 5px;
+}
+
+.section2 {
+  background-color: antiquewhite;
+  width: 700px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid orange;
+}
