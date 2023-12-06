@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", loadItems);
+
 let form = document.querySelector(".my-form");
 let itemlist = document.querySelector("#items");
 
@@ -12,7 +14,7 @@ function addItem(e) {
   let date = document.querySelector("#date").value;
   let time = document.querySelector("#time").value;
 
-  let obj = {
+  let myObj = {
     name: name,
     email: email,
     phone: phone,
@@ -23,7 +25,7 @@ function addItem(e) {
   axios
     .post(
       "https://crudcrud.com/api/7543a5f1fec84883924964af1c386b35/appointmentData",
-      obj
+      myObj
     )
     .then((response) => {
       let responseData = response.data;
@@ -76,4 +78,50 @@ function removeItem(e) {
       itemlist.removeChild(li);
     }
   }
+}
+
+function loadItems() {
+  axios
+    .get(
+      "https://crudcrud.com/api/7543a5f1fec84883924964af1c386b35/appointmentData"
+    )
+    .then((response) => {
+      let items = response.data;
+
+      items.forEach((item) => {
+        let li = document.createElement("li");
+        li.dataset.email = item.email;
+        li.appendChild(
+          document.createTextNode(
+            `${item.name}, ${item.email}, ${item.phone}, ${item.date} ${item.time}`
+          )
+        );
+
+        let delBtn = document.createElement("button");
+        delBtn.className = "del";
+        delBtn.appendChild(document.createTextNode("Delete"));
+
+        delBtn.addEventListener("click", removeItem);
+
+        let editBtn = document.createElement("button");
+        editBtn.classList = "edit";
+        editBtn.appendChild(document.createTextNode("Edit"));
+
+        editBtn.addEventListener("click", editList);
+
+        function editList(e) {
+          itemlist.removeChild(li);
+          document.querySelector("#name").value = item.name;
+          document.querySelector("#email").value = item.email;
+          document.querySelector("#phone").value = item.phone;
+          document.querySelector("#date").value = item.date;
+          document.querySelector("#time").value = item.time;
+        }
+
+        itemlist.appendChild(li);
+        li.appendChild(delBtn);
+        li.appendChild(editBtn);
+      });
+    })
+    .catch((err) => console.error(err));
 }
