@@ -76,21 +76,8 @@ function removeItem(e) {
     if (confirm("Are you sure?")) {
       let li = e.target.parentElement;
       itemlist.removeChild(li);
-
-      removeFromServer(li.dataset.email);
     }
   }
-}
-
-function removeFromServer(email) {
-  axios
-    .delete(
-      `https://crudcrud.com/api/7543a5f1fec84883924964af1c386b35/appointmentData/${email}`
-    )
-    .then((response) => {
-      console.log("Item removed from server");
-    })
-    .catch((err) => console.error(err));
 }
 
 function loadItems() {
