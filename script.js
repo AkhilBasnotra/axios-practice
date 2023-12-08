@@ -24,13 +24,13 @@ function addItem(e) {
 
   axios
     .post(
-      "https://crudcrud.com/api/7543a5f1fec84883924964af1c386b35/appointmentData",
+      "https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData",
       myObj
     )
     .then((response) => {
       let responseData = response.data;
       let li = document.createElement("li");
-      li.dataset.email = responseData.email;
+      li.dataset._id = responseData._id;
       li.appendChild(
         document.createTextNode(
           `${responseData.name}, ${responseData.email}, ${responseData.phone}, ${responseData.date} ${responseData.time}`
@@ -41,7 +41,7 @@ function addItem(e) {
       delBtn.className = "del";
       delBtn.appendChild(document.createTextNode("Delete"));
 
-      delBtn.addEventListener("click", removeItem);
+      delBtn.addEventListener("click", (e) => removeItem(e, responseData._id));
 
       let editBtn = document.createElement("button");
       editBtn.classList = "edit";
@@ -75,22 +75,34 @@ function removeItem(e) {
   if (e.target.classList.contains("del")) {
     if (confirm("Are you sure?")) {
       let li = e.target.parentElement;
-      itemlist.removeChild(li);
+      removeFromServer(li);
     }
   }
+}
+
+function removeFromServer(li) {
+  let id = li.dataset._id;
+  axios
+    .delete(
+      `https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData/${id}`
+    )
+    .then((response) => {
+      itemlist.removeChild(li);
+      console.log("Item removed from server");
+    })
+    .catch((err) => console.error(err));
 }
 
 function loadItems() {
   axios
     .get(
-      "https://crudcrud.com/api/7543a5f1fec84883924964af1c386b35/appointmentData"
+      "https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData"
     )
     .then((response) => {
       let items = response.data;
-
       items.forEach((item) => {
         let li = document.createElement("li");
-        li.dataset.email = item.email;
+        li.dataset._id = item._id;
         li.appendChild(
           document.createTextNode(
             `${item.name}, ${item.email}, ${item.phone}, ${item.date} ${item.time}`
