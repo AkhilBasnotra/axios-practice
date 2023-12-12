@@ -1,9 +1,18 @@
-document.addEventListener("DOMContentLoaded", loadItems);
+document.addEventListener("DOMContentLoaded", loadItem);
+let myform = document.querySelector(".my-form");
+let items = document.querySelector("#items");
+let url =
+  "https://crudcrud.com/api/b5f0bbfc8d134208ac4f2796d61a9c20/appointments";
 
-let form = document.querySelector(".my-form");
-let itemlist = document.querySelector("#items");
+myform.addEventListener("submit", addItem);
 
-form.addEventListener("submit", addItem);
+// function getacall(e) {
+//   if (myform.dataset.id) {
+//     editItem();
+//   } else {
+//     addItem(e);
+//   }
+// }
 
 function addItem(e) {
   e.preventDefault();
@@ -15,60 +24,46 @@ function addItem(e) {
   let time = document.querySelector("#time").value;
 
   let myObj = {
-    name: name,
-    email: email,
-    phone: phone,
-    date: date,
-    time: time,
+    name,
+    email,
+    phone,
+    date,
+    time,
   };
 
   axios
-    .post(
-      "https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData",
-      myObj
-    )
+    .post(url, myObj)
     .then((response) => {
-      let responseData = response.data;
-      let li = document.createElement("li");
-      li.dataset._id = responseData._id;
-      li.appendChild(
-        document.createTextNode(
-          `${responseData.name}, ${responseData.email}, ${responseData.phone}, ${responseData.date} ${responseData.time}`
-        )
-      );
-
-      let delBtn = document.createElement("button");
-      delBtn.className = "del";
-      delBtn.appendChild(document.createTextNode("Delete"));
-
-      delBtn.addEventListener("click", (e) => removeItem(e, responseData._id));
-
-      let editBtn = document.createElement("button");
-      editBtn.classList = "edit";
-      editBtn.appendChild(document.createTextNode("Edit"));
-
-      editBtn.addEventListener("click", editList);
-
-      function editList(e) {
-        itemlist.removeChild(li);
-        document.querySelector("#name").value = name;
-        document.querySelector("#email").value = email;
-        document.querySelector("#phone").value = phone;
-        document.querySelector("#date").value = date;
-        document.querySelector("#time").value = time;
-      }
-
-      itemlist.appendChild(li);
-      li.appendChild(delBtn);
-      li.appendChild(editBtn);
-
-      document.querySelector("#name").value = "";
-      document.querySelector("#email").value = "";
-      document.querySelector("#phone").value = "";
-      document.querySelector("#date").value = "";
-      document.querySelector("#time").value = "";
+      addListItem(response.data);
     })
-    .catch((err) => console.error(err));
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function loadItem() {
+  axios
+    .get(url)
+    .then((response) => {
+      let items = response.data;
+      items.forEach((element) => {
+        addListItem(element);
+      });
+    })
+    .catch((error) => console.error(error));
+}
+
+function removeFromServer(li) {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${url}/${li.dataset.id}`)
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 }
 
 function removeItem(e) {
@@ -80,60 +75,58 @@ function removeItem(e) {
   }
 }
 
-function removeFromServer(li) {
-  let id = li.dataset._id;
-  axios
-    .delete(
-      `https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData/${id}`
+function addListItem(myObj) {
+  let li = document.createElement("li");
+  li.dataset.id = myObj._id;
+  li.appendChild(
+    document.createTextNode(
+      `${myObj.name}, ${myObj.email}, ${myObj.phone}, ${myObj.date}, ${myObj.time}`
     )
-    .then((response) => {
-      itemlist.removeChild(li);
-      console.log("Item removed from server");
-    })
-    .catch((err) => console.error(err));
+  );
+
+  let delBtn = document.createElement("button");
+  delBtn.classList = "del";
+  delBtn.appendChild(document.createTextNode("Delete"));
+  delBtn.addEventListener("click", removeItem);
+
+  let editBtn = document.createElement("button");
+  editBtn.appendChild(document.createTextNode("Edit"));
+  editBtn.addEventListener("click", function (e) {
+    editItem(e, myObj);
+  });
+
+  items.appendChild(li);
+  li.appendChild(delBtn);
+  li.appendChild(editBtn);
 }
 
-function loadItems() {
-  axios
-    .get(
-      "https://crudcrud.com/api/48c00604b7704e4e8d2dd0e1211d8ff3/appointmentData"
-    )
-    .then((response) => {
-      let items = response.data;
-      items.forEach((item) => {
-        let li = document.createElement("li");
-        li.dataset._id = item._id;
-        li.appendChild(
-          document.createTextNode(
-            `${item.name}, ${item.email}, ${item.phone}, ${item.date} ${item.time}`
-          )
-        );
+function editItem(e, myObj) {
+  let li = e.target.parentElement;
+  let data = li.dataset;
 
-        let delBtn = document.createElement("button");
-        delBtn.className = "del";
-        delBtn.appendChild(document.createTextNode("Delete"));
-
-        delBtn.addEventListener("click", removeItem);
-
-        let editBtn = document.createElement("button");
-        editBtn.classList = "edit";
-        editBtn.appendChild(document.createTextNode("Edit"));
-
-        editBtn.addEventListener("click", editList);
-
-        function editList(e) {
-          itemlist.removeChild(li);
-          document.querySelector("#name").value = item.name;
-          document.querySelector("#email").value = item.email;
-          document.querySelector("#phone").value = item.phone;
-          document.querySelector("#date").value = item.date;
-          document.querySelector("#time").value = item.time;
-        }
-
-        itemlist.appendChild(li);
-        li.appendChild(delBtn);
-        li.appendChild(editBtn);
-      });
+  removeFromServer(li)
+    .then(() => {
+      li.remove();
     })
-    .catch((err) => console.error(err));
+    .catch((error) => {
+      console.error(error);
+    });
+
+  // items.removeChild(li);
+
+  // myform.dataset.id = data.id;
+  // editDetails(li);
+
+  document.querySelector("#name").value = myObj.name;
+  document.querySelector("#email").value = myObj.email;
+  document.querySelector("#phone").value = myObj.phone;
+  document.querySelector("#date").value = myObj.date;
+  document.querySelector("#time").value = myObj.time;
 }
+
+// function editDetails(li) {
+//   axios
+//     .put(`${url}/${li.dataset.id}`, editedObj)
+//     .then((response) => {})
+//     .catch((error) => console.error(error));
+// }
